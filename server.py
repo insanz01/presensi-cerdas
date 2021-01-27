@@ -256,14 +256,14 @@ def index():
     
     data = {"message": message, "status": status, "code": code}
     
-    return jsonify(data)
+    return jsonify(data), code
 
 # *************************
 # MAHASISWA THINGS
 # *************************
 
 @cross_origin()
-@app.route('/mahasiswa', methods=['GET'])
+@app.route('/mahasiswa', methods=['GET', 'POST'])
 @app.route('/mahasiswa/<nim>', methods=['GET'])
 @app.route('/mahasiswa/<nim_presensi>/presensi', methods=['GET'])
 def mahasiswa(nim = 0, nim_presensi = 0):
@@ -272,6 +272,36 @@ def mahasiswa(nim = 0, nim_presensi = 0):
     container = []
     status = 'No Content'
     code = 204
+    
+    if request.method == 'POST':
+        mhs = request.get_json()
+    
+        try:
+            NIM = mhs['NIM']
+            nama = mhs['nama']
+            semester = mhs['semester']
+        except:
+            print('Bad Request')
+            status = 'Bad Request'
+            code = 400
+            
+            data = {'data': '', 'status': status, 'code': code}
+            
+            return jsonify(data), code
+        
+        sql = "INSERT INTO mahasiswa values (%s, %s, %s)"
+        val = (NIM, nama, semester)
+        
+        cursor.execute(sql, val)
+        conn.commit()
+        close_DB()
+        
+        status = 'No Content'
+        code = 204
+        
+        data = {'data': '', 'status': status, 'code': code}
+        
+        return jsonify(data), code
     
     if nim == 0:
         sql = "SELECT * FROM mahasiswa";
@@ -315,7 +345,7 @@ def mahasiswa(nim = 0, nim_presensi = 0):
     
     data = {'data': container, 'status': status, 'code': code}
     
-    return jsonify(data)
+    return jsonify(data), code
 
 # *************************
 # END OF MAHASISWA THINGS
@@ -381,7 +411,7 @@ def matakuliah(id = 0, id_jadwal = 0):
     
     data = {'data': container, 'status': status, 'code': code}
     
-    return jsonify(data)
+    return jsonify(data), code
 
 
 @cross_origin()
@@ -423,11 +453,11 @@ def jadwal(id = 0):
     
     data = {'data': container, 'status': status, 'code': code}
     
-    return jsonify(data)
+    return jsonify(data), code
 
 
 @cross_origin()
-@app.route('/kelas', methods=['GET'])
+@app.route('/kelas', methods=['GET', 'POST'])
 @app.route('/kelas/<id>', methods=['GET'])
 @app.route('/kelas/<id_jadwal>/jadwal', methods=['GET'])
 def kelas(id = 0, id_jadwal = 0):
@@ -477,7 +507,7 @@ def kelas(id = 0, id_jadwal = 0):
     
     data = {'data': container, 'status': status, 'code': code}
     
-    return jsonify(data)
+    return jsonify(data), code
 
 # *************************
 # END OF MATAKULIAH THINGS
@@ -489,7 +519,7 @@ def kelas(id = 0, id_jadwal = 0):
 # *************************
 
 @cross_origin()
-@app.route('/dosen', methods=['GET'])
+@app.route('/dosen', methods=['GET', 'POST'])
 @app.route('/dosen/<nip>', methods=['GET'])
 @app.route('/dosen/<id_jadwal>/jadwal', methods=['GET'])
 def dosen(nip = 0, id_jadwal = 0):
@@ -498,6 +528,37 @@ def dosen(nip = 0, id_jadwal = 0):
     container = []
     status = 'No Content'
     code = 204
+    
+    if request.method == 'POST':
+        dsn = request.get_json()
+    
+        try:
+            NIP = dsn['NIP']
+            nama = dsn['nama']
+            prodi = dsn['prodi']
+        except:
+            print('Bad Request')
+            status = 'Bad Request'
+            code = 400
+            
+            data = {'data': '', 'status': status, 'code': code}
+            
+            return jsonify(data), code
+        
+        sql = "INSERT INTO dosen values (%s, %s, %s)"
+        val = (NIP, nama, prodi)
+        
+        cursor.execute(sql, val)
+        conn.commit()
+        close_DB()
+        
+        status = 'No Content'
+        code = 204
+        
+        data = {'data': '', 'status': status, 'code': code}
+        
+        return jsonify(data), code
+        
     
     if nip == 0:
         sql = "SELECT * FROM dosen";
@@ -543,7 +604,8 @@ def dosen(nip = 0, id_jadwal = 0):
     
     data = {'data': container, 'status': status, 'code': code}
     
-    return jsonify(data)
+    return jsonify(data), code
+
 
 # *************************
 # END OF DOSEN THINGS
@@ -560,4 +622,4 @@ def about():
 
     data = {"message": message, "status": status, "code": code}
 
-    return jsonify(data)
+    return jsonify(data), code
