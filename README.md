@@ -1,11 +1,9 @@
 # HOW TO INSTALL
-==================================
 
-pip install -r requirements.txt
+	pip install -r requirements.txt
 
 
 # HOW TO RUN [Development]
-==================================
 
 ## Windows
 1. set FLASK_APP=server.py
